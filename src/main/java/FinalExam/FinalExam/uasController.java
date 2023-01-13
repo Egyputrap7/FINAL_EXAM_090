@@ -25,16 +25,16 @@ public class uasController {
     
     Person data = new Person();
     PersonJpaController pbjp = new PersonJpaController();
-    
-     @RequestMapping( value = "/GET/{id}",method= RequestMethod.GET )
-    public String getNameById(@PathVariable("id") int id){
-        try{
-            data = pbjp.findPerson(id);
-        }catch (Exception e){
-            
-        }
-        return data.getNama();
-    }
+//    
+//     @RequestMapping( value = "/GET/{id}",method= RequestMethod.GET )
+//    public String getNameById(@PathVariable("id") int id){
+//        try{
+//            data = pbjp.findPerson(id);
+//        }catch (Exception e){
+//            
+//        }
+//        return data.getNama();
+//    }
     
     @RequestMapping(value = "/GET" ,method= RequestMethod.GET,consumes = APPLICATION_JSON_VALUE )
     public List<Person> getAll(){
@@ -59,12 +59,30 @@ public class uasController {
             
             newData =map.readValue(json_reciver, Person.class);
             
-            pbjp.create(data);
+            pbjp.create(newData);
             
-            message = data.getNama()+"Data Saved";
+            message = newData.getNama()+"Data Saved";
             
         } catch (Exception e) {message="Failed";}
         
+        return message;
+    }
+    @RequestMapping(value = "/PUT")
+    public String editData(HttpEntity<String> kiriman){
+        String message="no Action";
+        
+        try {
+            String json_reciver = kiriman.getBody();
+            ObjectMapper mapper = new ObjectMapper();
+            
+            Person datanew = new Person();
+            
+            datanew = mapper.readValue(json_reciver, Person.class);
+            pbjp.edit(datanew);
+            
+            message = datanew.getNama()+"has been Update";
+        } catch (Exception e) {
+        }
         return message;
     }
 }
