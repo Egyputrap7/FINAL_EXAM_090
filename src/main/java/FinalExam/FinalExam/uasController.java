@@ -4,8 +4,10 @@
  */
 package FinalExam.FinalExam;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.http.HttpEntity;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,5 +46,25 @@ public class uasController {
                     
         }
         return dummy;
+    }
+    
+    @RequestMapping(value = "/POST",method= RequestMethod.POST,consumes = APPLICATION_JSON_VALUE)
+    public String createData(HttpEntity<String>paket){
+        String message = "";
+        try {
+            String json_reciver=paket.getBody();
+            
+            ObjectMapper map = new ObjectMapper();
+            Person newData = new Person();
+            
+            newData =map.readValue(json_reciver, Person.class);
+            
+            pbjp.create(data);
+            
+            message = data.getNama()+"Data Saved";
+            
+        } catch (Exception e) {message="Failed";}
+        
+        return message;
     }
 }
