@@ -8,11 +8,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.http.HttpEntity;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -21,86 +22,82 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin
+@RequestMapping("/data")
 public class uasController {
     
     Person data = new Person();
     PersonJpaController pbjp = new PersonJpaController();
-//    
-//     @RequestMapping( value = "/GET/{id}",method= RequestMethod.GET )
-//    public String getNameById(@PathVariable("id") int id){
-//        try{
-//            data = pbjp.findPerson(id);
-//        }catch (Exception e){
-//            
-//        }
-//        return data.getNama();
-//    }
-    
-    @RequestMapping(value = "/GET" ,method= RequestMethod.GET,consumes = APPLICATION_JSON_VALUE )
-    public List<Person> getAll(){
-        List<Person> dummy = new ArrayList();
+//Get Data
+    @GetMapping
+    public List<Person> getAll() {
+        List<Person> dummy = new ArrayList<>();
         try {
             dummy = pbjp.findPersonEntities();
         } catch (Exception e) {
             dummy = List.of();
-                    
         }
         return dummy;
     }
     
-    @RequestMapping(value = "/POST",method= RequestMethod.POST,consumes = APPLICATION_JSON_VALUE)
-    public String createData(HttpEntity<String>paket){
+
+    //Post Data
+    @PostMapping()
+    public String createData(HttpEntity<String> paket) {
         String message = "";
+
         try {
-            String json_reciver=paket.getBody();
-            
+            String json_receive = paket.getBody();
+
             ObjectMapper map = new ObjectMapper();
-            Person newData = new Person();
-            
-            newData =map.readValue(json_reciver, Person.class);
-            
-            pbjp.create(newData);
-            
-            message = newData.getNama()+"Data Saved";
-            
-        } catch (Exception e) {message="Failed";}
-        
+
+            Person data = new Person();
+
+            data = map.readValue(json_receive, Person.class);
+
+            pbjp.create(data);
+            message = data.getNama()+ " Data Saved";
+
+        } catch (Exception e) {
+            message = "Failed";
+        }
+
         return message;
     }
-    @RequestMapping(value = "/PUT")
-    public String editData(HttpEntity<String> kiriman){
-        String message="no Action";
-        
+    //Method Delete
+      @PutMapping()
+    public String editData(HttpEntity<String> kiriman) {
+        String message = "no action";
         try {
-            String json_reciver = kiriman.getBody();
+            String json_receive = kiriman.getBody();
             ObjectMapper mapper = new ObjectMapper();
-            
-            Person datanew = new Person();
-            
-            datanew = mapper.readValue(json_reciver, Person.class);
-            pbjp.edit(datanew);
-            
-            message = datanew.getNama()+"has been Update";
+
+            Person newdatas = new Person();
+
+            newdatas = mapper.readValue(json_receive, Person.class);
+            pbjp.edit(newdatas);
+            message = newdatas.getNama()+ " has been Updated";
         } catch (Exception e) {
         }
         return message;
     }
-     @RequestMapping(value = "/DELETE/{id}")
-    public String deleteData(HttpEntity<String> kiriman){
-        String message="no Action";
-        
+    //Delete Method
+      @DeleteMapping()
+    public String deleteData(HttpEntity<String> kiriman) {
+        String message = "no action";
         try {
-            String json_reciver = kiriman.getBody();
+            String json_receive = kiriman.getBody();
             ObjectMapper mapper = new ObjectMapper();
-            
-            Person databaru = new Person();
-            
-            databaru = mapper.readValue(json_reciver, Person.class);
-            pbjp.destroy(databaru.getId());
-            
-            message = databaru.getNama()+" has been Delete";
+
+            Person newdatas = new Person();
+
+            newdatas = mapper.readValue(json_receive, Person.class);
+            pbjp.destroy(newdatas.getId());
+
+            message = "Data has been Deleted";
         } catch (Exception e) {
         }
         return message;
     }
+
 }
+
