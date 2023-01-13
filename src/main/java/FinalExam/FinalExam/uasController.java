@@ -85,4 +85,22 @@ public class uasController {
         }
         return message;
     }
+     @RequestMapping(value = "/DELETE/{id}")
+    public String deleteData(HttpEntity<String> kiriman){
+        String message="no Action";
+        
+        try {
+            String json_reciver = kiriman.getBody();
+            ObjectMapper mapper = new ObjectMapper();
+            
+            Person databaru = new Person();
+            
+            databaru = mapper.readValue(json_reciver, Person.class);
+            pbjp.destroy(databaru.getId());
+            
+            message = databaru.getNama()+" has been Delete";
+        } catch (Exception e) {
+        }
+        return message;
+    }
 }
